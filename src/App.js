@@ -1,10 +1,11 @@
 import * as ImpactAddresses from './data/ImpactAddress.json';
-import React from 'react';
-import { GoogleMap, withScriptjs, withGoogleMap, Marker } from 'react-google-maps';
+import React, { useState } from 'react';
+import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow } from 'react-google-maps';
 require('dotenv').config();
 
 
 function Map() {
+  const [selectedAddress, setSelectedAddress] = useState(null);
   return (
     <GoogleMap
       defaultZoom={16}
@@ -13,13 +14,27 @@ function Map() {
       {ImpactAddresses.Impact.map((address) => (
         <Marker
           key={address.A}
-          position={{           
+          position={{
             lat: Number(address.B),
             lng: Number(address.C)
           }}
-          icon={{}}
+          onMouseOver={() => {
+            setSelectedAddress(address);
+          }}
         />
       ))}
+
+      {selectedAddress && (
+        <InfoWindow
+          position={{
+            lat: Number(selectedAddress.B),
+            lng: Number(selectedAddress.C)
+          }}
+          onCloseClick={() =>{
+            setSelectedAddress(null);
+          }}
+        ><div>Address Info</div></InfoWindow>
+      )}
     </GoogleMap>
   );
 }
